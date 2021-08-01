@@ -24,7 +24,8 @@ class App extends Component {
   async componentDidUpdate(prevProps, prevState) {
     if (prevState !== this.state) {
       if (prevState.query !== this.state.query) {
-        this.setState(prevState => ({ ...prevState, isLoading: true }));
+
+        this.setState(prevState => ({ ...prevState, isLoading: true}));
         const response = await Pixabay.getImages(
           this.state.query,
           this.state.page,
@@ -37,7 +38,7 @@ class App extends Component {
         }));
       }
 
-      if (prevState.page !== this.state.page) {
+      if (prevState.page !== this.state.page && prevState.query===this.state.query) {
         this.setState(prevState => ({ ...prevState, isLoading: true }));
         const response = await Pixabay.getImages(
           this.state.query,
