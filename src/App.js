@@ -61,7 +61,6 @@ class App extends Component {
 
   onLoadMore = () => {
     this.setState(prevState => ({ ...prevState, page: prevState.page + 1 }));
-    console.log(this.state);
   };
 
   onModalOpen = event => {
