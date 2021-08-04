@@ -18,49 +18,50 @@ class App extends Component {
   };
 
   formSubmit = data => {
-    this.setState({ query: data.query });
+    this.setState({ query: data.query, page: 1, images:[] });
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevState !== this.state) {
-      if (prevState.query !== this.state.query) {
+    if (prevState.query !== this.state.query) {
+      this.setState(prevState => ({ ...prevState, isLoading: true }));
+      const response = await Pixabay.getImages(
+        this.state.query,
+        this.state.page,
+      );
 
-        this.setState(prevState => ({ ...prevState, isLoading: true}));
-        const response = await Pixabay.getImages(
-          this.state.query,
-          this.state.page,
-        );
+      this.setState(prevState => ({
+        ...prevState,
+        images: response,
+        isLoading: false,
+      }));
+    }
 
-        this.setState(prevState => ({
-          ...prevState,
-          images: response,
-          isLoading: false,
-        }));
-      }
+    if (
+      prevState.page !== this.state.page &&
+      prevState.query === this.state.query
+    ) {
+      this.setState(prevState => ({ ...prevState, isLoading: true }));
+      const response = await Pixabay.getImages(
+        this.state.query,
+        this.state.page,
+      );
 
-      if (prevState.page !== this.state.page && prevState.query===this.state.query) {
-        this.setState(prevState => ({ ...prevState, isLoading: true }));
-        const response = await Pixabay.getImages(
-          this.state.query,
-          this.state.page,
-        );
+      this.setState(prevState => ({
+        ...prevState,
+        images: [...prevState.images, ...response],
+        isLoading: false,
+      }));
 
-        this.setState(prevState => ({
-          ...prevState,
-          images: [...prevState.images, ...response],
-          isLoading: false,
-        }));
-
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: 'smooth',
-        });
-      }
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   }
 
   onLoadMore = () => {
     this.setState(prevState => ({ ...prevState, page: prevState.page + 1 }));
+    console.log(this.state);
   };
 
   onModalOpen = event => {
